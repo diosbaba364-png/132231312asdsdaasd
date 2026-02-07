@@ -13,7 +13,7 @@
     <div class="fixed inset-0 flex justify-center items-start pt-8">
         <div
             id="loginModal"
-            class="relative bg-[#2b4d6d] border-4 border-[#87b8cc] shadow-lg p-8 w-3/5 max-w-lg sm:w-4/5 xs:w-11/12 h-60 rounded-lg flex flex-col justify-center opacity-0 translate-y-[-20px] transition-all duration-700 ease-out">
+            class="relative bg-[#2b4d6d] border-4 border-[#87b8cc] shadow-lg p-8 w-3/5 max-w-lg sm:w-4/5 xs:w-11/12 rounded-lg opacity-0 translate-y-[-20px] transition-all duration-700 ease-out">
             <p class="text-white text-center font-bold text-2xl">Log in with your Grow ID</p>
             <div id="errorDiv"
                 class="hidden flex flex-col mt-2 text-xs text-red-700 font-bold px-[5px] bg-[#2b4d6d] rounded">
@@ -59,16 +59,13 @@
                 </div>
             </form>
 
-            <div class="mt-3">
-                <div class="flex justify-between items-center mb-2">
-                    <div>
-                        <button id="showLogin" class="px-2 py-1 mr-2 rounded bg-[#00b8ff] text-white text-xs">Login</button>
-                        <button id="showRegister" class="px-2 py-1 rounded bg-[#06c57b] text-white text-xs">Register</button>
-                    </div>
-                </div>
+            <div class="flex justify-start items-center mt-3 mb-2">
+                <button id="showLogin" class="px-2 py-1 mr-2 rounded bg-[#00b8ff] text-white text-xs">Login</button>
+                <button id="showRegister" class="px-2 py-1 rounded bg-[#06c57b] text-white text-xs">Register</button>
+            </div>
 
-                <!-- Register form (hidden by default) -->
-                <form method="post" action="/player/growid/login/validate" accept-charset="UTF-8" id="registerForm" class="mt-3 hidden">
+            <!-- Register form (hidden by default) -->
+            <form method="post" action="/player/growid/login/validate" accept-charset="UTF-8" id="registerForm" class="hidden">
                     <input name="type" value="reg" type="hidden" />
                     <input name="_token" id="hiddenTokenReg" value="{{ data }}" type="hidden" />
                     <input name="has_reg" value="1" type="hidden" />
@@ -113,14 +110,6 @@
                     </div>
                 </form>
 
-                <div class="mt-3 text-xs text-white">
-                    <p class="font-bold">Example Encoded Tokens</p>
-                    <div class="mt-1">
-                        <div class="mb-1">Register (example): <code id="regEncoded" class="break-all"></code></div>
-                        <div>Login (example): <code id="logEncoded" class="break-all"></code></div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
     <script>
@@ -145,20 +134,6 @@
             if (hiddenToken) {
                 hiddenToken.value = '{}';
             }
-
-            // prepare example encoded tokens and display them
-            const serverName = window.location.hostname || 'localhost';
-            const regPlain = `_token={}&growId=dios&password=12341234&email_reg=dios@gmail.com&has_reg=1&ServerName=${serverName}`;
-            const logPlain = `_token={}&growId=dios&password=12341234&email_reg=undefined&has_reg=0&ServerName=${serverName}`;
-            function encodeUTF8ToBase64(str) {
-                return btoa(unescape(encodeURIComponent(str)));
-            }
-            const regEncoded = encodeUTF8ToBase64(regPlain);
-            const logEncoded = encodeUTF8ToBase64(logPlain);
-            const regEl = document.getElementById('regEncoded');
-            const logEl = document.getElementById('logEncoded');
-            if (regEl) regEl.innerText = regEncoded;
-            if (logEl) logEl.innerText = logEncoded;
         });
         document.getElementById('loginButton').addEventListener('click', function (event) {
             event.preventDefault();
