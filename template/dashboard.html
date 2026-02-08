@@ -9,25 +9,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #1a1a1a;
+            background-color: #ffffff; /* Arka plan beyaz */
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .main-card {
-            background: linear-gradient(135deg, #232526 50%, #b34711 50%);
-            width: 850px;
-            height: 500px;
-            border-radius: 20px;
-            box-shadow: 0 0 50px rgba(255, 69, 0, 0.3);
+            background: #ffffff;
+            width: 750px; /* Daha küçük ve kompakt */
+            height: 450px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1); /* Yumuşak gölge */
             display: flex;
             overflow: hidden;
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #f0f0f0;
         }
 
         .left-side {
@@ -36,6 +35,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background: #fff;
         }
 
         .right-side {
@@ -44,70 +44,74 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg, #ff8f00 0%, #ff5e00 100%); /* Parlak turuncu */
             color: white;
-            padding: 40px;
+            padding: 30px;
             text-align: center;
         }
 
         .input-group {
-            border-bottom: 2px solid #444;
-            margin-bottom: 25px;
-            position: relative;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+
+        .input-group:focus-within {
+            border-bottom-color: #ff5e00;
         }
 
         .input-group input {
             background: transparent;
             border: none;
-            color: white;
+            color: #333;
             width: 100%;
-            padding: 10px 0;
+            padding: 8px 0;
             outline: none;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .input-group label {
             color: #ff5e00;
-            font-size: 14px;
-            font-weight: bold;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
             display: block;
         }
 
         .btn-orange {
-            background: linear-gradient(to right, #e65100, #ff8f00);
+            background: #ff5e00;
             color: white;
             padding: 12px;
-            border-radius: 25px;
+            border-radius: 12px;
             font-weight: bold;
             text-align: center;
-            transition: 0.3s;
+            transition: 0.3s ease;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.4);
+            box-shadow: 0 4px 15px rgba(255, 94, 0, 0.3);
+            border: none;
+            margin-top: 10px;
         }
 
         .btn-orange:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 20px rgba(230, 81, 0, 0.6);
+            background: #e65100;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 94, 0, 0.4);
         }
 
-        .toggle-btn {
-            border: 1px solid #ff5e00;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 12px;
-            margin-bottom: 20px;
-            display: inline-block;
-            cursor: pointer;
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         #errorDiv {
-            background: rgba(255, 0, 0, 0.1);
             color: #ff4444;
-            padding: 8px;
-            border-radius: 5px;
             font-size: 12px;
-            margin-bottom: 15px;
-            text-align: center;
+            margin-bottom: 10px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -116,121 +120,120 @@
 
     <div class="main-card">
         <div class="left-side">
-            <div id="formHeader">
-                <div id="showLogin" class="toggle-btn" style="border-color: #00b8ff;">Login</div>
-                <div id="showRegister" class="toggle-btn">Register</div>
-                <h2 id="titleText" class="text-white text-3xl font-bold mb-6">Login</h2>
-            </div>
+            <h2 id="titleText" class="text-gray-800 text-2xl font-black mb-6">Login</h2>
 
             <div id="errorDiv" class="hidden">
-                <span id="errorMessage"></span>
+                <i class="fas fa-exclamation-circle mr-1"></i> <span id="errorMessage"></span>
             </div>
 
-            <form id="loginForm" method="post" action="/player/growid/login/validate">
-                <input name="type" value="log" type="hidden" />
-                <input name="_token" value="{{ data }}" type="hidden" />
-                
-                <div class="input-group">
-                    <label>GrowID</label>
-                    <div class="flex items-center">
-                        <input type="text" id="loginGrowId" name="growId" placeholder="Enter GrowID">
-                        <i class="fas fa-user text-gray-500"></i>
+            <div id="loginSection" class="fade-in">
+                <form id="loginForm" method="post" action="/player/growid/login/validate">
+                    <input name="type" value="log" type="hidden" />
+                    <input name="_token" value="{{ data }}" type="hidden" />
+                    
+                    <div class="input-group">
+                        <label>GrowID</label>
+                        <div class="flex items-center">
+                            <input type="text" id="loginGrowId" name="growId" placeholder="Enter GrowID">
+                            <i class="fas fa-user text-gray-300 text-sm"></i>
+                        </div>
                     </div>
-                </div>
 
-                <div class="input-group">
-                    <label>Password</label>
-                    <div class="flex items-center">
-                        <input type="password" id="loginPassword" name="password" placeholder="Enter Password">
-                        <i class="fas fa-lock text-gray-500 cursor-pointer" id="togglePass"></i>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <div class="flex items-center">
+                            <input type="password" id="loginPassword" name="password" placeholder="Enter Password">
+                            <i class="fas fa-eye text-gray-300 text-sm cursor-pointer" id="togglePass"></i>
+                        </div>
                     </div>
-                </div>
 
-                <div class="input-group">
-                    <label>ServerName</label>
-                    <input type="text" id="loginServerName" name="ServerName" placeholder="localhost">
-                </div>
-
-                <button type="submit" id="loginButton" class="btn-orange w-full">Login</button>
-            </form>
-
-            <form id="registerForm" method="post" action="/player/growid/login/validate" class="hidden">
-                <input name="type" value="reg" type="hidden" />
-                <input name="has_reg" value="1" type="hidden" />
-                
-                <div class="input-group">
-                    <label>ServerName</label>
-                    <div class="flex items-center">
-                        <input type="text" id="regServer" name="ServerName" placeholder="Enter server address">
-                        <i class="fas fa-server text-gray-500"></i>
+                    <div class="input-group">
+                        <label>ServerName</label>
+                        <input type="text" id="loginServerName" name="ServerName" placeholder="e.g. localhost">
                     </div>
-                </div>
 
-                <button type="button" id="registerButton" class="btn-orange w-full">Register</button>
-            </form>
+                    <button type="submit" class="btn-orange w-full">Login</button>
+                </form>
+                <p class="text-gray-400 text-xs mt-6 text-center">
+                    Don't have an account? <span class="text-orange-500 font-bold cursor-pointer hover:underline" id="switchToReg">Register</span>
+                </p>
+            </div>
 
-            <p class="text-gray-400 text-xs mt-6 text-center">
-                Don't have an account? <span class="text-green-500 cursor-pointer" id="switchReg">Register</span>
-            </p>
+            <div id="registerSection" class="hidden fade-in">
+                <form id="registerForm" method="post" action="/player/growid/login/validate">
+                    <input name="type" value="reg" type="hidden" />
+                    <input name="has_reg" value="1" type="hidden" />
+                    
+                    <div class="input-group">
+                        <label>Server Address</label>
+                        <div class="flex items-center">
+                            <input type="text" id="regServer" name="ServerName" placeholder="Enter server name">
+                            <i class="fas fa-server text-gray-300 text-sm"></i>
+                        </div>
+                    </div>
+
+                    <button type="button" id="registerButton" class="btn-orange w-full">Register Server</button>
+                </form>
+                <p class="text-gray-400 text-xs mt-6 text-center">
+                    Already have an account? <span class="text-orange-500 font-bold cursor-pointer hover:underline" id="switchToLog">Login</span>
+                </p>
+            </div>
         </div>
 
         <div class="right-side">
-            <img src="https://login-page-blond.vercel.app/game_title.png" alt="Growtopia" class="w-64 mb-6">
-            <h1 class="text-3xl font-bold mb-2">WELCOME BACK!</h1>
-            <p class="text-sm opacity-80">
-                We are happy to have you with us again. If you need anything, we are here to help.
+            <img src="https://login-page-blond.vercel.app/game_title.png" alt="Growtopia" class="w-48 mb-6 drop-shadow-lg">
+            <h1 class="text-2xl font-black mb-2 uppercase tracking-tight">Welcome Back!</h1>
+            <p class="text-xs opacity-90 leading-relaxed max-w-[200px]">
+                Manage your server and account easily with our dashboard.
             </p>
         </div>
     </div>
 
     <script>
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
+        const loginSection = document.getElementById('loginSection');
+        const registerSection = document.getElementById('registerSection');
         const titleText = document.getElementById('titleText');
         const errorDiv = document.getElementById('errorDiv');
         const errorMessage = document.getElementById('errorMessage');
 
-        // Form Değiştirme Fonksiyonları
-        function openRegister() {
-            loginForm.classList.add('hidden');
-            registerForm.classList.remove('hidden');
+        // Form Değiştirme (Register'a Geç)
+        document.getElementById('switchToReg').addEventListener('click', () => {
+            loginSection.classList.add('hidden');
+            registerSection.classList.remove('hidden');
             titleText.innerText = "Register";
             errorDiv.classList.add('hidden');
-        }
+        });
 
-        function openLogin() {
-            registerForm.classList.add('hidden');
-            loginForm.classList.remove('hidden');
+        // Form Değiştirme (Login'e Geç)
+        document.getElementById('switchToLog').addEventListener('click', () => {
+            registerSection.classList.add('hidden');
+            loginSection.classList.remove('hidden');
             titleText.innerText = "Login";
             errorDiv.classList.add('hidden');
-        }
+        });
 
-        document.getElementById('showRegister').addEventListener('click', openRegister);
-        document.getElementById('switchReg').addEventListener('click', openRegister);
-        document.getElementById('showLogin').addEventListener('click', openLogin);
-
-        // Login İşlemi
-        loginForm.addEventListener('submit', function (e) {
+        // Login Submit
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
             const u = document.getElementById('loginGrowId').value;
             const p = document.getElementById('loginPassword').value;
             if (!u || !p) {
                 e.preventDefault();
                 errorDiv.classList.remove('hidden');
-                errorMessage.innerText = "Please fill all fields!";
+                errorMessage.innerText = "Fields cannot be empty!";
             } else {
                 localStorage.setItem('growId', u);
             }
         });
 
-        // Register İşlemi
+        // Register Submit
         document.getElementById('registerButton').addEventListener('click', function () {
             const s = document.getElementById('regServer').value;
             if (!s) {
                 errorDiv.classList.remove('hidden');
-                errorMessage.innerText = "Server Name is required!";
+                errorMessage.innerText = "Server address is required!";
             } else {
                 document.getElementById('loginServerName').value = s;
-                registerForm.submit();
+                document.getElementById('registerForm').submit();
             }
         });
 
@@ -239,18 +242,16 @@
             const passField = document.getElementById('loginPassword');
             if (passField.type === "password") {
                 passField.type = "text";
-                this.classList.replace('fa-lock', 'fa-unlock');
+                this.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
                 passField.type = "password";
-                this.classList.replace('fa-unlock', 'fa-lock');
+                this.classList.replace('fa-eye-slash', 'fa-eye');
             }
         });
 
-        // Sayfa yüklendiğinde GrowID getir
         window.onload = () => {
-            if (localStorage.getItem('growId')) {
-                document.getElementById('loginGrowId').value = localStorage.getItem('growId');
-            }
+            const savedId = localStorage.getItem('growId');
+            if (savedId) document.getElementById('loginGrowId').value = savedId;
         };
     </script>
 </body>
