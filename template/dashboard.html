@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,236 +8,277 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
-            background-color: #ffffff; /* Arka plan beyaz */
+            background-color: #0b0b0b;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Kar Tanesi Animasyonu */
+        .snowflake {
+            color: #fff;
+            font-size: 1em;
+            font-family: Arial, sans-serif;
+            text-shadow: 0 0 5px #000;
+            position: fixed;
+            top: -10%;
+            z-index: 1;
+            user-select: none;
+            cursor: default;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { top: -10%; transform: translateX(0); }
+            100% { top: 110%; transform: translateX(100px); }
         }
 
         .main-card {
-            background: #ffffff;
-            width: 750px; /* Daha küçük ve kompakt */
-            height: 450px;
-            border-radius: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1); /* Yumuşak gölge */
+            width: 650px;
+            height: 420px;
+            background: #181818;
+            border-radius: 15px;
+            position: relative;
             display: flex;
             overflow: hidden;
-            border: 1px solid #f0f0f0;
-        }
-
-        .left-side {
-            width: 50%;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            background: #fff;
+            box-shadow: 0 0 50px 5px rgba(255, 87, 34, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 10; /* Kart kardan üstte görünsün */
         }
 
         .right-side {
-            width: 50%;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 58%;
+            height: 100%;
+            background: linear-gradient(135deg, #30160d 0%, #8a3a19 60%, #b34a21 100%);
+            clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #ff8f00 0%, #ff5e00 100%); /* Parlak turuncu */
             color: white;
-            padding: 30px;
+            padding-left: 40px;
+            z-index: 5;
+        }
+
+        .left-side {
+            width: 48%;
+            padding: 25px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .title {
+            color: white;
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 20px;
             text-align: center;
         }
 
-        .input-group {
-            border-bottom: 2px solid #eee;
-            margin-bottom: 20px;
+        .input-group { margin-bottom: 12px; }
+
+        .input-label {
+            color: #ff5722;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .input-box {
+            background: transparent;
+            border-bottom: 1px solid #444;
+            display: flex;
+            align-items: center;
+            padding: 4px 0;
             transition: 0.3s;
         }
 
-        .input-group:focus-within {
-            border-bottom-color: #ff5e00;
-        }
+        .input-box:focus-within { border-bottom-color: #ff5722; }
 
-        .input-group input {
+        .input-box input {
             background: transparent;
             border: none;
-            color: #333;
-            width: 100%;
-            padding: 8px 0;
+            color: white;
             outline: none;
-            font-size: 15px;
+            width: 100%;
+            font-size: 14px;
         }
 
-        .input-group label {
-            color: #ff5e00;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            display: block;
-        }
+        .input-box i { color: #555; font-size: 13px; }
 
         .btn-orange {
-            background: #ff5e00;
+            background: linear-gradient(to right, #9e3d18, #ff5722);
             color: white;
-            padding: 12px;
-            border-radius: 12px;
+            padding: 10px;
+            border-radius: 20px;
             font-weight: bold;
-            text-align: center;
-            transition: 0.3s ease;
+            font-size: 14px;
+            border: 1px solid #5d2511;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 94, 0, 0.3);
-            border: none;
             margin-top: 10px;
+            width: 100%;
+            transition: 0.3s;
         }
 
-        .btn-orange:hover {
-            background: #e65100;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 94, 0, 0.4);
+        .btn-orange:hover { filter: brightness(1.1); transform: scale(1.02); }
+
+        .switch-link {
+            color: #888;
+            font-size: 11px;
+            text-align: center;
+            margin-top: 12px;
         }
 
-        .fade-in {
-            animation: fadeIn 0.5s ease;
+        .switch-link span { color: #ff5722; cursor: pointer; font-weight: bold; }
+
+        .form-content { transition: all 0.4s ease-in-out; }
+
+        .hidden-slide {
+            opacity: 0;
+            transform: translateX(40px);
+            position: absolute;
+            visibility: hidden;
+            pointer-events: none;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .active-slide {
+            opacity: 1;
+            transform: translateX(0);
+            position: relative;
+            visibility: visible;
         }
 
         #errorDiv {
             color: #ff4444;
-            font-size: 12px;
+            font-size: 11px;
             margin-bottom: 10px;
+            text-align: center;
             font-weight: 600;
         }
     </style>
 </head>
-
 <body>
 
     <div class="main-card">
         <div class="left-side">
-            <h2 id="titleText" class="text-gray-800 text-2xl font-black mb-6">Login</h2>
+            <h2 class="title" id="titleText">Login</h2>
 
             <div id="errorDiv" class="hidden">
                 <i class="fas fa-exclamation-circle mr-1"></i> <span id="errorMessage"></span>
             </div>
 
-            <div id="loginSection" class="fade-in">
+            <div id="loginSection" class="form-content active-slide">
                 <form id="loginForm" method="post" action="/player/growid/login/validate">
                     <input name="type" value="log" type="hidden" />
                     <input name="_token" value="{{ data }}" type="hidden" />
                     
                     <div class="input-group">
-                        <label>GrowID</label>
-                        <div class="flex items-center">
+                        <div class="input-label">GrowID</div>
+                        <div class="input-box">
                             <input type="text" id="loginGrowId" name="growId" placeholder="Enter GrowID">
-                            <i class="fas fa-user text-gray-300 text-sm"></i>
+                            <i class="fas fa-user"></i>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>Password</label>
-                        <div class="flex items-center">
+                        <div class="input-label">Password</div>
+                        <div class="input-box">
                             <input type="password" id="loginPassword" name="password" placeholder="Enter Password">
-                            <i class="fas fa-eye text-gray-300 text-sm cursor-pointer" id="togglePass"></i>
+                            <i class="fas fa-eye cursor-pointer" id="togglePass"></i>
                         </div>
                     </div>
 
                     <div class="input-group">
-                        <label>ServerName</label>
-                        <input type="text" id="loginServerName" name="ServerName" placeholder="e.g. localhost">
+                        <div class="input-label">Server Name</div>
+                        <div class="input-box">
+                            <input type="text" id="loginServerName" name="ServerName" placeholder="localhost">
+                            <i class="fas fa-server"></i>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn-orange w-full">Login</button>
+                    <button type="submit" class="btn-orange">Login</button>
                 </form>
-                <p class="text-gray-400 text-xs mt-6 text-center">
-                    Don't have an account? <span class="text-orange-500 font-bold cursor-pointer hover:underline" id="switchToReg">Register</span>
-                </p>
+                <p class="switch-link">Don't have an account? <span id="switchToReg">Register</span></p>
             </div>
 
-            <div id="registerSection" class="hidden fade-in">
+            <div id="registerSection" class="form-content hidden-slide">
                 <form id="registerForm" method="post" action="/player/growid/login/validate">
                     <input name="type" value="reg" type="hidden" />
                     <input name="has_reg" value="1" type="hidden" />
                     
                     <div class="input-group">
-                        <label>Server Address</label>
-                        <div class="flex items-center">
+                        <div class="input-label">Server Address</div>
+                        <div class="input-box">
                             <input type="text" id="regServer" name="ServerName" placeholder="Enter server name">
-                            <i class="fas fa-server text-gray-300 text-sm"></i>
+                            <i class="fas fa-globe"></i>
                         </div>
                     </div>
 
-                    <button type="button" id="registerButton" class="btn-orange w-full">Register Server</button>
+                    <button type="button" id="registerButton" class="btn-orange">Register Server</button>
                 </form>
-                <p class="text-gray-400 text-xs mt-6 text-center">
-                    Already have an account? <span class="text-orange-500 font-bold cursor-pointer hover:underline" id="switchToLog">Login</span>
-                </p>
+                <p class="switch-link">Already have an account? <span id="switchToLog">Login</span></p>
             </div>
         </div>
 
         <div class="right-side">
-            <img src="https://login-page-blond.vercel.app/game_title.png" alt="Growtopia" class="w-48 mb-6 drop-shadow-lg">
-            <h1 class="text-2xl font-black mb-2 uppercase tracking-tight">Welcome Back!</h1>
-            <p class="text-xs opacity-90 leading-relaxed max-w-[200px]">
+            <img src="https://login-page-blond.vercel.app/game_title.png" class="w-36 mb-4" alt="Growtopia">
+            <h1 class="text-xl font-black mb-2 uppercase">Welcome Back!</h1>
+            <p class="text-[10px] text-center opacity-80 max-w-[180px]">
                 Manage your server and account easily with our dashboard.
             </p>
         </div>
     </div>
 
     <script>
+        // Kar Yağışı Oluşturucu
+        function createSnowflakes() {
+            const snowCount = 50;
+            for (let i = 0; i < snowCount; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerHTML = '❄';
+                flake.style.left = Math.random() * 100 + '%';
+                flake.style.opacity = Math.random();
+                flake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+                flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                flake.style.animationDelay = Math.random() * 2 + 's';
+                document.body.appendChild(flake);
+            }
+        }
+        createSnowflakes();
+
         const loginSection = document.getElementById('loginSection');
         const registerSection = document.getElementById('registerSection');
         const titleText = document.getElementById('titleText');
-        const errorDiv = document.getElementById('errorDiv');
-        const errorMessage = document.getElementById('errorMessage');
 
-        // Form Değiştirme (Register'a Geç)
-        document.getElementById('switchToReg').addEventListener('click', () => {
-            loginSection.classList.add('hidden');
-            registerSection.classList.remove('hidden');
-            titleText.innerText = "Register";
-            errorDiv.classList.add('hidden');
-        });
+        document.getElementById('switchToReg').onclick = () => {
+            loginSection.classList.replace('active-slide', 'hidden-slide');
+            setTimeout(() => {
+                registerSection.classList.replace('hidden-slide', 'active-slide');
+                titleText.innerText = "Register";
+            }, 150);
+        };
 
-        // Form Değiştirme (Login'e Geç)
-        document.getElementById('switchToLog').addEventListener('click', () => {
-            registerSection.classList.add('hidden');
-            loginSection.classList.remove('hidden');
-            titleText.innerText = "Login";
-            errorDiv.classList.add('hidden');
-        });
+        document.getElementById('switchToLog').onclick = () => {
+            registerSection.classList.replace('active-slide', 'hidden-slide');
+            setTimeout(() => {
+                loginSection.classList.replace('hidden-slide', 'active-slide');
+                titleText.innerText = "Login";
+            }, 150);
+        };
 
-        // Login Submit
-        document.getElementById('loginForm').addEventListener('submit', function (e) {
-            const u = document.getElementById('loginGrowId').value;
-            const p = document.getElementById('loginPassword').value;
-            if (!u || !p) {
-                e.preventDefault();
-                errorDiv.classList.remove('hidden');
-                errorMessage.innerText = "Fields cannot be empty!";
-            } else {
-                localStorage.setItem('growId', u);
-            }
-        });
-
-        // Register Submit
-        document.getElementById('registerButton').addEventListener('click', function () {
-            const s = document.getElementById('regServer').value;
-            if (!s) {
-                errorDiv.classList.remove('hidden');
-                errorMessage.innerText = "Server address is required!";
-            } else {
-                document.getElementById('loginServerName').value = s;
-                document.getElementById('registerForm').submit();
-            }
-        });
-
-        // Şifre Göster/Gizle
-        document.getElementById('togglePass').addEventListener('click', function () {
+        document.getElementById('togglePass').onclick = function() {
             const passField = document.getElementById('loginPassword');
             if (passField.type === "password") {
                 passField.type = "text";
@@ -247,13 +287,7 @@
                 passField.type = "password";
                 this.classList.replace('fa-eye-slash', 'fa-eye');
             }
-        });
-
-        window.onload = () => {
-            const savedId = localStorage.getItem('growId');
-            if (savedId) document.getElementById('loginGrowId').value = savedId;
         };
     </script>
 </body>
-
 </html>
