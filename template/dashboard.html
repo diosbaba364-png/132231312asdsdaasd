@@ -7,165 +7,251 @@
     <title>Growtopia - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        .main-card {
+            background: linear-gradient(135deg, #232526 50%, #b34711 50%);
+            width: 850px;
+            height: 500px;
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(255, 69, 0, 0.3);
+            display: flex;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .left-side {
+            width: 50%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right-side {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .input-group {
+            border-bottom: 2px solid #444;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .input-group input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            padding: 10px 0;
+            outline: none;
+            font-size: 16px;
+        }
+
+        .input-group label {
+            color: #ff5e00;
+            font-size: 14px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .btn-orange {
+            background: linear-gradient(to right, #e65100, #ff8f00);
+            color: white;
+            padding: 12px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-align: center;
+            transition: 0.3s;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.4);
+        }
+
+        .btn-orange:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 20px rgba(230, 81, 0, 0.6);
+        }
+
+        .toggle-btn {
+            border: 1px solid #ff5e00;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-bottom: 20px;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        #errorDiv {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff4444;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
 </head>
 
-<body class="flex flex-col items-center justify-center h-screen bg-transparent">
-    <div class="fixed inset-0 flex justify-center items-start pt-8">
-        <div id="loginModal"
-            class="relative bg-[#2b4d6d] border-4 border-[#87b8cc] shadow-lg p-8 w-3/5 max-w-lg sm:w-4/5 xs:w-11/12 rounded-lg opacity-0 translate-y-[-20px] transition-all duration-700 ease-out">
-            <p class="text-white text-center font-bold text-2xl">Log in with your Grow ID</p>
-            
-            <div id="errorDiv"
-                class="hidden flex flex-col mt-2 text-xs text-red-700 font-bold px-[5px] bg-[#2b4d6d] rounded">
-                <a id="errorMessage"></a>
+<body>
+
+    <div class="main-card">
+        <div class="left-side">
+            <div id="formHeader">
+                <div id="showLogin" class="toggle-btn" style="border-color: #00b8ff;">Login</div>
+                <div id="showRegister" class="toggle-btn">Register</div>
+                <h2 id="titleText" class="text-white text-3xl font-bold mb-6">Login</h2>
             </div>
 
-            <div class="flex justify-start items-center mt-3 mb-2">
-                <button id="showLogin" class="px-2 py-1 mr-2 rounded bg-[#00b8ff] text-white text-xs">Login</button>
-                <button id="showRegister" class="px-2 py-1 rounded bg-[#06c57b] text-white text-xs">Register</button>
+            <div id="errorDiv" class="hidden">
+                <span id="errorMessage"></span>
             </div>
 
-            <form method="post" action="/player/growid/login/validate" accept-charset="UTF-8" id="loginForm" class="mt-3">
-                <div class="mb-1">
-                    <input name="type" value="log" type="hidden" />
-                    <input name="_token" id="hiddenToken" value="{{ data }}" type="hidden" />
-                    <input name="has_reg" value="0" type="hidden" />
-                    <label for="loginGrowId" class="block text-white text-xs">GrowID</label>
-                    <div class="flex items-center border-2 border-[#81d4fa] rounded bg-[#2b4d6d] px-1 py-1">
-                        <i class="fas fa-user text-white mr-1 text-xs"></i>
-                        <input type="text" name="growId" id="loginGrowId"
-                            class="w-full bg-[#2b4d6d] text-white text-xs placeholder-white focus:outline-none"
-                            placeholder="Enter your growid">
+            <form id="loginForm" method="post" action="/player/growid/login/validate">
+                <input name="type" value="log" type="hidden" />
+                <input name="_token" value="{{ data }}" type="hidden" />
+                
+                <div class="input-group">
+                    <label>GrowID</label>
+                    <div class="flex items-center">
+                        <input type="text" id="loginGrowId" name="growId" placeholder="Enter GrowID">
+                        <i class="fas fa-user text-gray-500"></i>
                     </div>
                 </div>
-                <div class="mb-1">
-                    <label for="loginPassword" class="block text-white text-xs">Password</label>
-                    <div class="flex items-center border-2 border-[#81d4fa] rounded bg-[#2b4d6d] px-1 py-1">
-                        <i class="fas fa-lock text-white mr-1 text-xs"></i>
-                        <input type="password" name="password" id="loginPassword"
-                            class="w-full bg-[#2b4d6d] text-white text-xs placeholder-white focus:outline-none"
-                            placeholder="Enter your password">
-                        <button type="button" id="toggleLogPassword" class="text-white ml-2 focus:outline-none text-xs">
-                            <i class="fas fa-eye"></i>
-                        </button>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="flex items-center">
+                        <input type="password" id="loginPassword" name="password" placeholder="Enter Password">
+                        <i class="fas fa-lock text-gray-500 cursor-pointer" id="togglePass"></i>
                     </div>
                 </div>
-                <div class="mb-1">
-                    <label for="loginServerName" class="block text-white text-xs">ServerName</label>
-                    <div class="flex items-center border-2 border-[#81d4fa] rounded bg-[#2b4d6d] px-1 py-1">
-                        <input type="text" name="ServerName" id="loginServerName"
-                            class="w-full bg-[#2b4d6d] text-white text-xs placeholder-white focus:outline-none"
-                            placeholder="ServerName (e.g. localhost)">
-                    </div>
+
+                <div class="input-group">
+                    <label>ServerName</label>
+                    <input type="text" id="loginServerName" name="ServerName" placeholder="localhost">
                 </div>
-                <div class="flex justify-end items-center mt-3">
-                    <button id="loginButton"
-                        class="px-2 py-1 rounded bg-[#00b8ff] text-white text-xs hover:bg-[#06a4dd] transition duration-300">Login</button>
-                </div>
+
+                <button type="submit" id="loginButton" class="btn-orange w-full">Login</button>
             </form>
 
-            <form method="post" action="/player/growid/login/validate" accept-charset="UTF-8" id="registerForm" class="hidden mt-3">
+            <form id="registerForm" method="post" action="/player/growid/login/validate" class="hidden">
                 <input name="type" value="reg" type="hidden" />
-                <input name="_token" id="hiddenTokenReg" value="{{ data }}" type="hidden" />
                 <input name="has_reg" value="1" type="hidden" />
                 
-                <div class="mb-1">
-                    <label for="regServer" class="block text-white text-xs">ServerName</label>
-                    <div class="flex items-center border-2 border-[#81d4fa] rounded bg-[#2b4d6d] px-1 py-1">
-                        <i class="fas fa-server text-white mr-1 text-xs"></i>
-                        <input type="text" name="ServerName" id="regServer"
-                            class="w-full bg-[#2b4d6d] text-white text-xs placeholder-white focus:outline-none"
-                            placeholder="Enter server name">
+                <div class="input-group">
+                    <label>ServerName</label>
+                    <div class="flex items-center">
+                        <input type="text" id="regServer" name="ServerName" placeholder="Enter server address">
+                        <i class="fas fa-server text-gray-500"></i>
                     </div>
                 </div>
 
-                <div class="flex justify-end items-center mt-3">
-                    <button id="registerButton" type="button"
-                        class="px-2 py-1 rounded bg-[#06c57b] text-white text-xs hover:bg-[#05b76a] transition duration-300">Register</button>
-                </div>
+                <button type="button" id="registerButton" class="btn-orange w-full">Register</button>
             </form>
 
+            <p class="text-gray-400 text-xs mt-6 text-center">
+                Don't have an account? <span class="text-green-500 cursor-pointer" id="switchReg">Register</span>
+            </p>
+        </div>
+
+        <div class="right-side">
+            <img src="https://login-page-blond.vercel.app/game_title.png" alt="Growtopia" class="w-64 mb-6">
+            <h1 class="text-3xl font-bold mb-2">WELCOME BACK!</h1>
+            <p class="text-sm opacity-80">
+                We are happy to have you with us again. If you need anything, we are here to help.
+            </p>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Animasyon tetikleyici
-            setTimeout(() => {
-                const modal = document.getElementById('loginModal');
-                if (modal) modal.classList.remove('opacity-0', 'translate-y-[-20px]');
-            }, 100);
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const titleText = document.getElementById('titleText');
+        const errorDiv = document.getElementById('errorDiv');
+        const errorMessage = document.getElementById('errorMessage');
 
-            // Kayıtlı GrowID varsa getir
+        // Form Değiştirme Fonksiyonları
+        function openRegister() {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            titleText.innerText = "Register";
+            errorDiv.classList.add('hidden');
+        }
+
+        function openLogin() {
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            titleText.innerText = "Login";
+            errorDiv.classList.add('hidden');
+        }
+
+        document.getElementById('showRegister').addEventListener('click', openRegister);
+        document.getElementById('switchReg').addEventListener('click', openRegister);
+        document.getElementById('showLogin').addEventListener('click', openLogin);
+
+        // Login İşlemi
+        loginForm.addEventListener('submit', function (e) {
+            const u = document.getElementById('loginGrowId').value;
+            const p = document.getElementById('loginPassword').value;
+            if (!u || !p) {
+                e.preventDefault();
+                errorDiv.classList.remove('hidden');
+                errorMessage.innerText = "Please fill all fields!";
+            } else {
+                localStorage.setItem('growId', u);
+            }
+        });
+
+        // Register İşlemi
+        document.getElementById('registerButton').addEventListener('click', function () {
+            const s = document.getElementById('regServer').value;
+            if (!s) {
+                errorDiv.classList.remove('hidden');
+                errorMessage.innerText = "Server Name is required!";
+            } else {
+                document.getElementById('loginServerName').value = s;
+                registerForm.submit();
+            }
+        });
+
+        // Şifre Göster/Gizle
+        document.getElementById('togglePass').addEventListener('click', function () {
+            const passField = document.getElementById('loginPassword');
+            if (passField.type === "password") {
+                passField.type = "text";
+                this.classList.replace('fa-lock', 'fa-unlock');
+            } else {
+                passField.type = "password";
+                this.classList.replace('fa-unlock', 'fa-lock');
+            }
+        });
+
+        // Sayfa yüklendiğinde GrowID getir
+        window.onload = () => {
             if (localStorage.getItem('growId')) {
                 document.getElementById('loginGrowId').value = localStorage.getItem('growId');
             }
-        });
-
-        // FORM GEÇİŞLERİ
-        const showLoginBtn = document.getElementById('showLogin');
-        const showRegisterBtn = document.getElementById('showRegister');
-        const loginFormEl = document.getElementById('loginForm');
-        const registerFormEl = document.getElementById('registerForm');
-        const errorDiv = document.getElementById('errorDiv');
-
-        showRegisterBtn.addEventListener('click', () => {
-            loginFormEl.classList.add('hidden');
-            registerFormEl.classList.remove('hidden');
-            errorDiv.classList.add('hidden');
-        });
-
-        showLoginBtn.addEventListener('click', () => {
-            registerFormEl.classList.add('hidden');
-            loginFormEl.classList.remove('hidden');
-            errorDiv.classList.add('hidden');
-        });
-
-        // LOGIN İŞLEMİ
-        document.getElementById('loginButton').addEventListener('click', function (e) {
-            e.preventDefault();
-            const uName = document.getElementById('loginGrowId').value;
-            const uPass = document.getElementById('loginPassword').value;
-
-            if (!uName || !uPass) {
-                errorDiv.classList.remove('hidden');
-                document.getElementById('errorMessage').innerText = 'Username or Password is empty';
-                return;
-            }
-            
-            localStorage.setItem('growId', uName);
-            document.getElementById('loginForm').submit();
-        });
-
-        // REGISTER İŞLEMİ
-        document.getElementById('registerButton').addEventListener('click', function (e) {
-            e.preventDefault();
-            const rServer = document.getElementById('regServer').value;
-
-            if (!rServer) {
-                errorDiv.classList.remove('hidden');
-                document.getElementById('errorMessage').innerText = 'Server Name is required';
-                return;
-            }
-
-            // Login tarafındaki server name'i de dolduralım
-            const loginServer = document.getElementById('loginServerName');
-            if (loginServer) loginServer.value = rServer;
-
-            document.getElementById('registerForm').submit();
-        });
-
-        // ŞİFRE GÖSTER/GİZLE
-        document.getElementById('toggleLogPassword').addEventListener('click', function () {
-            const passField = document.getElementById('loginPassword');
-            if (passField.type === 'password') {
-                passField.type = 'text';
-                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
-            } else {
-                passField.type = 'password';
-                this.innerHTML = '<i class="fas fa-eye"></i>';
-            }
-        });
+        };
     </script>
 </body>
 
