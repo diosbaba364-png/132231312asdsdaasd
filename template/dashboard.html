@@ -19,7 +19,7 @@
             position: relative;
         }
 
-        /* Kar Tanesi Animasyonu */
+        /* Snowflake Animation */
         .snowflake {
             color: #fff;
             font-size: 1em;
@@ -48,7 +48,7 @@
             overflow: hidden;
             box-shadow: 0 0 50px 5px rgba(255, 87, 34, 0.45);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            z-index: 10; /* Kart kardan üstte görünsün */
+            z-index: 10;
         }
 
         .right-side {
@@ -129,6 +129,7 @@
             margin-top: 10px;
             width: 100%;
             transition: 0.3s;
+            text-align: center;
         }
 
         .btn-orange:hover { filter: brightness(1.1); transform: scale(1.02); }
@@ -144,19 +145,17 @@
 
         .form-content { transition: all 0.4s ease-in-out; }
 
+        /* Fixed visibility issue by using display: none for inactive slides */
         .hidden-slide {
+            display: none;
             opacity: 0;
             transform: translateX(40px);
-            position: absolute;
-            visibility: hidden;
-            pointer-events: none;
         }
 
         .active-slide {
+            display: block;
             opacity: 1;
             transform: translateX(0);
-            position: relative;
-            visibility: visible;
         }
 
         #errorDiv {
@@ -186,7 +185,7 @@
                     <div class="input-group">
                         <div class="input-label">GrowID</div>
                         <div class="input-box">
-                            <input type="text" id="loginGrowId" name="growId" placeholder="Enter GrowID">
+                            <input type="text" id="loginGrowId" name="growId" placeholder="Enter GrowID" required>
                             <i class="fas fa-user"></i>
                         </div>
                     </div>
@@ -194,7 +193,7 @@
                     <div class="input-group">
                         <div class="input-label">Password</div>
                         <div class="input-box">
-                            <input type="password" id="loginPassword" name="password" placeholder="Enter Password">
+                            <input type="password" id="loginPassword" name="password" placeholder="Enter Password" required>
                             <i class="fas fa-eye cursor-pointer" id="togglePass"></i>
                         </div>
                     </div>
@@ -202,7 +201,7 @@
                     <div class="input-group">
                         <div class="input-label">Server Name</div>
                         <div class="input-box">
-                            <input type="text" id="loginServerName" name="ServerName" placeholder="Server Name">
+                            <input type="text" id="loginServerName" name="ServerName" placeholder="Server Name" required>
                             <i class="fas fa-server"></i>
                         </div>
                     </div>
@@ -216,16 +215,17 @@
                 <form id="registerForm" method="post" action="/player/growid/login/validate">
                     <input name="type" value="reg" type="hidden" />
                     <input name="has_reg" value="1" type="hidden" />
+                    <input name="_token" value="{{ data }}" type="hidden" />
                     
                     <div class="input-group">
-                        <div class="input-label">Server Address</div>
+                        <div class="input-label">Server Name</div>
                         <div class="input-box">
-                            <input type="text" id="regServer" name="ServerName" placeholder="Enter server name">
+                            <input type="text" id="regServer" name="ServerName" placeholder="Enter server name" required>
                             <i class="fas fa-globe"></i>
                         </div>
                     </div>
 
-                    <button type="button" id="registerButton" class="btn-orange">Register Server</button>
+                    <button type="submit" id="registerButton" class="btn-orange">Register Server</button>
                 </form>
                 <p class="switch-link">Already have an account? <span id="switchToLog">Login</span></p>
             </div>
@@ -241,9 +241,9 @@
     </div>
 
     <script>
-        // Kar Yağışı Oluşturucu
+        // Snowflakes Generator
         function createSnowflakes() {
-            const snowCount = 50;
+            const snowCount = 40;
             for (let i = 0; i < snowCount; i++) {
                 const flake = document.createElement('div');
                 flake.className = 'snowflake';
@@ -262,22 +262,20 @@
         const registerSection = document.getElementById('registerSection');
         const titleText = document.getElementById('titleText');
 
+        // Toggle Logic
         document.getElementById('switchToReg').onclick = () => {
             loginSection.classList.replace('active-slide', 'hidden-slide');
-            setTimeout(() => {
-                registerSection.classList.replace('hidden-slide', 'active-slide');
-                titleText.innerText = "Register";
-            }, 150);
+            registerSection.classList.replace('hidden-slide', 'active-slide');
+            titleText.innerText = "Register";
         };
 
         document.getElementById('switchToLog').onclick = () => {
             registerSection.classList.replace('active-slide', 'hidden-slide');
-            setTimeout(() => {
-                loginSection.classList.replace('hidden-slide', 'active-slide');
-                titleText.innerText = "Login";
-            }, 150);
+            loginSection.classList.replace('hidden-slide', 'active-slide');
+            titleText.innerText = "Login";
         };
 
+        // Password Visibility Toggle
         document.getElementById('togglePass').onclick = function() {
             const passField = document.getElementById('loginPassword');
             if (passField.type === "password") {
