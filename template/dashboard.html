@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Growtopia - Dashboard</title>
+    <title>Growtopia - DiosHost</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -19,7 +19,7 @@
             position: relative;
         }
 
-        /* Snowflake Animation */
+        /* Kar Tanesi Animasyonu */
         .snowflake {
             color: #fff;
             font-size: 1em;
@@ -75,6 +75,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            position: relative;
         }
 
         .title {
@@ -143,19 +144,26 @@
 
         .switch-link span { color: #ff5722; cursor: pointer; font-weight: bold; }
 
-        .form-content { transition: all 0.4s ease-in-out; }
+        /* --- ANİMASYON AYARLARI --- */
+        .form-content {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 85%;
+        }
 
-        /* Fixed visibility issue by using display: none for inactive slides */
         .hidden-slide {
-            display: none;
             opacity: 0;
-            transform: translateX(40px);
+            transform: translateX(-50px);
+            pointer-events: none;
+            position: absolute;
+            visibility: hidden;
         }
 
         .active-slide {
-            display: block;
             opacity: 1;
             transform: translateX(0);
+            pointer-events: auto;
+            position: relative;
+            visibility: visible;
         }
 
         #errorDiv {
@@ -185,7 +193,7 @@
                     <div class="input-group">
                         <div class="input-label">GrowID</div>
                         <div class="input-box">
-                            <input type="text" id="loginGrowId" name="growId" placeholder="Enter GrowID" required>
+                            <input type="text" name="growId" placeholder="Enter GrowID" required>
                             <i class="fas fa-user"></i>
                         </div>
                     </div>
@@ -201,7 +209,7 @@
                     <div class="input-group">
                         <div class="input-label">Server Name</div>
                         <div class="input-box">
-                            <input type="text" id="loginServerName" name="ServerName" placeholder="Server Name" required>
+                            <input type="text" id="loginServerName" class="server-input" name="ServerName" placeholder="Server Name" required>
                             <i class="fas fa-server"></i>
                         </div>
                     </div>
@@ -220,12 +228,12 @@
                     <div class="input-group">
                         <div class="input-label">Server Name</div>
                         <div class="input-box">
-                            <input type="text" id="regServer" name="ServerName" placeholder="Enter server name" required>
+                            <input type="text" id="regServer" class="server-input" name="ServerName" placeholder="Enter server name" required>
                             <i class="fas fa-globe"></i>
                         </div>
                     </div>
 
-                    <button type="submit" id="registerButton" class="btn-orange">Register Server</button>
+                    <button type="submit" class="btn-orange">Register Server</button>
                 </form>
                 <p class="switch-link">Already have an account? <span id="switchToLog">Login</span></p>
             </div>
@@ -241,7 +249,7 @@
     </div>
 
     <script>
-        // Snowflakes Generator
+        // Kar Yağışı
         function createSnowflakes() {
             const snowCount = 40;
             for (let i = 0; i < snowCount; i++) {
@@ -262,7 +270,7 @@
         const registerSection = document.getElementById('registerSection');
         const titleText = document.getElementById('titleText');
 
-        // Toggle Logic
+        // Geçiş Mantığı
         document.getElementById('switchToReg').onclick = () => {
             loginSection.classList.replace('active-slide', 'hidden-slide');
             registerSection.classList.replace('hidden-slide', 'active-slide');
@@ -275,7 +283,7 @@
             titleText.innerText = "Login";
         };
 
-        // Password Visibility Toggle
+        // Şifre Göster/Gizle
         document.getElementById('togglePass').onclick = function() {
             const passField = document.getElementById('loginPassword');
             if (passField.type === "password") {
@@ -286,6 +294,31 @@
                 this.classList.replace('fa-eye-slash', 'fa-eye');
             }
         };
+
+        // --- LOCAL STORAGE & SERVER NAME KAYDETME ---
+        const serverInputs = document.querySelectorAll('.server-input');
+
+        // Sayfa açıldığında kayıtlı veriyi çek
+        const savedServer = localStorage.getItem('gt_server_name');
+        if (savedServer) {
+            serverInputs.forEach(input => {
+                input.value = savedServer;
+            });
+        }
+
+        // Herhangi bir server inputu değiştiğinde kaydet
+        serverInputs.forEach(input => {
+            input.addEventListener('input', (e) => {
+                const value = e.target.value;
+                localStorage.setItem('gt_server_name', value);
+                
+                // Diğer inputu da güncelle (senkronizasyon)
+                serverInputs.forEach(otherInput => {
+                    if (otherInput !== input) otherInput.value = value;
+                });
+            });
+        });
+
     </script>
 </body>
 </html>
