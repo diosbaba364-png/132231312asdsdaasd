@@ -273,36 +273,33 @@
     </div>
 
     <script>
-        // --- TOKEN DOĞRULAMA AKIŞI ---
+        // --- TOKEN DOĞRULAMA AKIŞI (FIXED) ---
         async function syncGrowtopiaTokens() {
-            // Mevcut tokenı al (ilk inputtan çekiyoruz)
-            const currentToken = document.querySelector('.token-field').value;
+            const tokenField = document.querySelector('.token-field');
+            if (!tokenField) return;
+
+            const currentToken = tokenField.value;
             
             try {
-                // 1. POST /player/growid/checktoken (307 Redirect takibi)
-                const checkRes = await fetch('/player/growid/checktoken', {
+                // Backend'in beklediği parametreleri gönderiyoruz (refreshToken ve clientData)
+                // redirect: 'follow' sayesinde 307 yönlendirmesi otomatik takip edilir.
+                const response = await fetch('/player/growid/checktoken', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: '_token=' + encodeURIComponent(currentToken),
+                    body: `_token=${encodeURIComponent(currentToken)}&refreshToken=${encodeURIComponent(currentToken)}&clientData=growtopia_internal`,
                     redirect: 'follow'
                 });
 
-                // 2. POST /player/growid/validate/checktoken (Yeni tokenı alma)
-                const validateRes = await fetch('/player/growid/validate/checktoken', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: '_token=' + encodeURIComponent(currentToken)
-                });
-
-                if (validateRes.ok) {
-                    const result = await validateRes.json();
-                    // Gelen yeni tokenı her iki formdaki gizli inputa da yaz
-                    if (result.token || result.new_token) {
-                        const newToken = result.token || result.new_token;
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Gelen yeni tokenı al ve tüm formlardaki alanları güncelle
+                    const newToken = result.token || result.new_token;
+                    if (newToken) {
                         document.querySelectorAll('.token-field').forEach(input => {
                             input.value = newToken;
                         });
-                        console.log("Token successfully updated.");
+                        console.log("Token updated and synchronized.");
                     }
                 }
             } catch (err) {
@@ -349,39 +346,4 @@
             titleText.innerText = "Login";
         };
 
-        // Şifre Göster/Gizle
-        document.querySelectorAll('.toggle-pass-icon').forEach(icon => {
-            icon.onclick = function() {
-                const targetId = this.getAttribute('data-target');
-                const passField = document.getElementById(targetId);
-                if (passField.type === "password") {
-                    passField.type = "text";
-                    this.classList.replace('fa-eye', 'fa-eye-slash');
-                } else {
-                    passField.type = "password";
-                    this.classList.replace('fa-eye-slash', 'fa-eye');
-                }
-            };
-        });
-
-        // --- LOCAL STORAGE & SERVER NAME KAYDETME ---
-        const serverInputs = document.querySelectorAll('.server-input');
-        const savedServer = localStorage.getItem('gt_server_name');
-        if (savedServer) {
-            serverInputs.forEach(input => {
-                input.value = savedServer;
-            });
-        }
-
-        serverInputs.forEach(input => {
-            input.addEventListener('input', (e) => {
-                const value = e.target.value;
-                localStorage.setItem('gt_server_name', value);
-                serverInputs.forEach(otherInput => {
-                    if (otherInput !== input) otherInput.value = value;
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+        // Şifre Gö
