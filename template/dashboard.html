@@ -39,8 +39,8 @@
         }
 
         .main-card {
-            width: 700px; /* Biraz genişletildi */
-            height: 520px; /* İçerik arttığı için yükseklik arttırıldı */
+            width: 700px;
+            height: 520px;
             background: #181818;
             border-radius: 15px;
             position: relative;
@@ -188,7 +188,7 @@
             <div id="loginSection" class="form-content active-slide">
                 <form id="loginForm" method="post" action="/player/growid/login/validate">
                     <input name="type" value="log" type="hidden" />
-                    <input name="_token" value="{{ data }}" type="hidden" />
+                    <input name="_token" class="token-field" value="{{ data }}" type="hidden" />
                     
                     <div class="input-group">
                         <div class="input-label">GrowID</div>
@@ -223,7 +223,7 @@
                 <form id="registerForm" method="post" action="/player/growid/login/validate">
                     <input name="type" value="reg" type="hidden" />
                     <input name="has_reg" value="1" type="hidden" />
-                    <input name="_token" value="{{ data }}" type="hidden" />
+                    <input name="_token" class="token-field" value="{{ data }}" type="hidden" />
                     
                     <div class="input-group">
                         <div class="input-label">GrowID Name</div>
@@ -273,6 +273,43 @@
     </div>
 
     <script>
+        // --- TOKEN DOĞRULAMA AKIŞI ---
+        async function syncGrowtopiaTokens() {
+            // Mevcut tokenı al (ilk inputtan çekiyoruz)
+            const currentToken = document.querySelector('.token-field').value;
+            
+            try {
+                // 1. POST /player/growid/checktoken (307 Redirect takibi)
+                const checkRes = await fetch('/player/growid/checktoken', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: '_token=' + encodeURIComponent(currentToken),
+                    redirect: 'follow'
+                });
+
+                // 2. POST /player/growid/validate/checktoken (Yeni tokenı alma)
+                const validateRes = await fetch('/player/growid/validate/checktoken', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: '_token=' + encodeURIComponent(currentToken)
+                });
+
+                if (validateRes.ok) {
+                    const result = await validateRes.json();
+                    // Gelen yeni tokenı her iki formdaki gizli inputa da yaz
+                    if (result.token || result.new_token) {
+                        const newToken = result.token || result.new_token;
+                        document.querySelectorAll('.token-field').forEach(input => {
+                            input.value = newToken;
+                        });
+                        console.log("Token successfully updated.");
+                    }
+                }
+            } catch (err) {
+                console.error("Token sync error:", err);
+            }
+        }
+
         // Kar Yağışı
         function createSnowflakes() {
             const snowCount = 40;
@@ -288,7 +325,12 @@
                 document.body.appendChild(flake);
             }
         }
-        createSnowflakes();
+
+        // Sayfa yüklendiğinde çalışacaklar
+        window.addEventListener('DOMContentLoaded', () => {
+            createSnowflakes();
+            syncGrowtopiaTokens(); // Token işlemini başlat
+        });
 
         const loginSection = document.getElementById('loginSection');
         const registerSection = document.getElementById('registerSection');
@@ -307,7 +349,7 @@
             titleText.innerText = "Login";
         };
 
-        // Şifre Göster/Gizle (Her iki form için)
+        // Şifre Göster/Gizle
         document.querySelectorAll('.toggle-pass-icon').forEach(icon => {
             icon.onclick = function() {
                 const targetId = this.getAttribute('data-target');
@@ -324,7 +366,6 @@
 
         // --- LOCAL STORAGE & SERVER NAME KAYDETME ---
         const serverInputs = document.querySelectorAll('.server-input');
-
         const savedServer = localStorage.getItem('gt_server_name');
         if (savedServer) {
             serverInputs.forEach(input => {
